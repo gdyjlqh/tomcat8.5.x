@@ -1,0 +1,80 @@
+@startuml
+hide footbox
+title <font color="red">tomcat8.5.x -- Digester
+
+participant Digester as A
+
+
+autonumber 1 "0:"
+
+[-> A : new
+activate A
+
+A -> A : setValidating()
+note right
+This must be before <b>parse()</b> is called the fisrt time.
+end note
+A -> A : setRulesValidation()
+A -> A : addRules
+A -> A : push()
+note right
+if (stack.size() == 0) {
+    root = object;
+ }
+stack.push(object);
+end note
+A -> A : parse()
+activate A
+
+A -> A : configure()
+A -> A : getXMLReader()
+activate A
+
+A -> A : getParser()
+activate A
+A -> A : getFactory()
+activate A
+
+A -> SAXParserFactory : newInstance()
+activate SAXParserFactory
+note over SAXParserFactory : SAXParserFactoryImpl
+SAXParserFactory -> SAXParser : getSAXParser()
+activate SAXParser
+note over SAXParser : new SAXParserImpl()
+SAXParser -> XMLReader : new JAXPSAXParser()
+activate XMLReader
+note over XMLReader : JAXPSAXParser
+SAXParser <- XMLReader : xmlReader
+SAXParserFactory -> SAXParser : getXMLReader()
+SAXParserFactory <- SAXParser : xmlReader
+
+A <- SAXParserFactory : reader:XMLReader
+deactivate A
+''''''''''end A : getFactory()
+deactivate A
+''''''''''end A : getParser()
+
+A -> XMLReader : setDTDHandler()
+A -> XMLReader : setContentHandler()
+A -> XMLReader : setErrorHandler()
+deactivate A
+''''''''''end A : getXMLReader()
+A -> XMLReader : parse()
+deactivate A
+''''''''''end A : parse()
+
+
+
+
+
+
+
+
+
+
+
+
+
+||200||
+
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+hide footbox
+title <font color="red">tomcat8.5.x -- 01
+
+[-> Bootstrap : main()
+activate Bootstrap
+autonumber "0:"
+
+'init start
+Bootstrap -> Bootstrap : init()
+activate Bootstrap
+
+'initClassLoaders start
+Bootstrap -> Bootstrap : initClassLoaders
+activate Bootstrap
+note left : 初始化：\n1.commnonLoader\n2.catalinaLoader\n3.sharedLoader
+
+Bootstrap -> Catalina : newInstance()
+activate Catalina
+Bootstrap -> Catalina : invoke:setparentClassLoader()
+Bootstrap <- Catalina : this
+'initClassLoaders end
+deactivate Bootstrap
+
+'init end
+deactivate Bootstrap
+
+||40||
+Bootstrap -> Catalina : load()
+activate Catalina
+Catalina -> Catalina : initDirs()
+Catalina -> Catalina : initNaming()
+Catalina -> Digester : createStartDigester()
+activate Digester
+Catalina <- Digester : this
+
+note right Catalina : server.xml inputStream
+Catalina -> Digester : push()
+Catalina -> Digester : parse()
+Digester -> Server : newInstance(）
+activate Server
+note right Digester : Digester.parse()时，\n根据配置server.xml对应节点\nnewInstance对象和设置相关属性\n如：setServer()
+Digester <- Server : server
+Catalina <- Digester : setServer()
+Catalina -> Server : setCatalina()
+Catalina -> Server : setCatalinaHome()
+Catalina -> Server : setCatalinaBase()
+Catalina -> Catalina : initStreams()
+||40||
+Catalina -> Server : init()
+
+
+
+||40||
+@enduml
